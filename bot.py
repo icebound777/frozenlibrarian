@@ -2,6 +2,7 @@
 """Chat bot for the discord chat software"""
 import os
 import discord
+from discord.ext import commands
 
 from dotenv import load_dotenv
 
@@ -11,15 +12,15 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 # Instancialise client connection
 intents = discord.Intents().all()
-dc_client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@dc_client.event
+@bot.event
 async def on_ready():
     """Initial actions after starting up"""
-    print(f'{dc_client.user} has connected to Discord!')
+    print(f'{bot.user} has connected to Discord!')
 
     print(f'\nConnected to following servers:')
-    for guild in dc_client.guilds:
+    for guild in bot.guilds:
         print(f'\"{guild.name}\" (id: {guild.id})')
         
         guild.fetch_members()
@@ -27,4 +28,4 @@ async def on_ready():
             print(f'Member: {member.name}')
 
 # Start bot
-dc_client.run(TOKEN)
+bot.run(TOKEN)
