@@ -5,14 +5,26 @@ import discord
 
 from dotenv import load_dotenv
 
+# Setup the bot's discord token (from local .env file)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-client = discord.Client()
+# Instancialise client connection
+intents = discord.Intents().all()
+dc_client = discord.Client(intents=intents)
 
-@client.event
+@dc_client.event
 async def on_ready():
     """Initial actions after starting up"""
-    print(f'{client.user} has connected to Discord!')
+    print(f'{dc_client.user} has connected to Discord!')
 
-client.run(TOKEN)
+    print(f'\nConnected to following servers:')
+    for guild in dc_client.guilds:
+        print(f'\"{guild.name}\" (id: {guild.id})')
+        
+        guild.fetch_members()
+        for member in guild.members:
+            print(f'Member: {member.name}')
+
+# Start bot
+dc_client.run(TOKEN)
