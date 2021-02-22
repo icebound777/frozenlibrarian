@@ -24,7 +24,7 @@ try:
     with open('channelnames_to_gametitles.json', 'r') as json_file:
         dict_channel_to_game = json.load(json_file)
 except:
-    print('channelnames_to_gametitles.json not found on startup.')
+    print('File channelnames_to_gametitles.json not found on startup.')
 
 # Eventhandling
 @bot.event
@@ -98,41 +98,56 @@ async def channelnames_to_gametitles():
                     # If channel does not exist
                     if voice_channel is None:
                         print(f'Channel "{bot_guild.name}".{channel_id} '
-                              f'(Default: "{channel_name_default}" does not exist)')
+                              f'(Default: "{channel_name_default}") does not exist')
                     # Channel is empty and name is not default
                     elif (len(voice_channel.members) == 0
                         and voice_channel.name != channel_name_default):
+                        print(f'Changed channel "{voice_channel.name}"" to '
+                              f'{channel_name_default}')
                         await voice_channel.edit(name=channel_name_default)
                     # Channel is not empty, don't care about channel name
                     elif len(voice_channel.members) > 0:
                         dict_membergames = {}
+                        print(f'{voice_channel.name}')
                         for channel_member in voice_channel.members:
                             if (channel_member.activity is not None
                                 and channel_member.activity.type == discord.ActivityType.playing):
                                 member_game = channel_member.activity.name
                                 dict_membergames[member_game] = dict_membergames.get(member_game, 0) + 1
-                                print(f'{channel_member.display_name}: '
+                                print(f'  {channel_member.display_name}: '
                                       f'{member_game}')
                             else:
                                 dict_membergames['None'] = dict_membergames.get('None', 0) + 1
                         # Sort played games by amount of players per game, decreasing
                         sorted_membergames = {}
-                        sorted_keys = sorted(dict_membergames, key=dict_membergames.get, reverse=True)
+                        sorted_keys = sorted(dict_membergames,
+                                             key=dict_membergames.get,
+                                             reverse=True)
                         for w in sorted_keys:
                             sorted_membergames[w] = dict_membergames[w]
-                        print(sorted_membergames)
+                        #print(sorted_membergames)
                         for most_played_key in sorted_membergames:
                             if most_played_key != 'None':
                                 if most_played_key != voice_channel.name:
-                                    await voice_channel.edit(name=most_played_key)
                                     print(f'Changed channel "{voice_channel.name}"" to '
                                           f'{most_played_key}')
+                                    await voice_channel.edit(name=most_played_key)
                                 break
+                            elif (len(sorted_membergames) == 1
+                                and voice_channel.name != channel_name_default):
+                                # Members in channel, but nobody is playing: Reset channel name
+                                print(f'Changed channel "{voice_channel.name}"" to '
+                                      f'{channel_name_default}')
+                                await voice_channel.edit(name=channel_name_default)
+                                break
+
+
+
 
 # Helper-Functions
 def log_cmd_details(ctx):
     now = datetime.datetime.now()
-    logdate = now.strftime('%Y-%m-%d_%H:%M:%S')
+    logdate = now.strftime('%Y-%m-%d %H:%M:%S')
     print(f'[{logdate}] Cmd: '
           f'"{ctx.message.content}" (by "{ctx.author}" in "{ctx.guild.name}".{ctx.channel.name})')
 
