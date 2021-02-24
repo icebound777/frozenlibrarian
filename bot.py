@@ -3,6 +3,7 @@
 import os
 import json
 import datetime
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -82,6 +83,12 @@ async def cmd_test(ctx):
     else:
         await channelnames_to_gametitles()
 
+async def repeat_cmd_test():
+    await bot.wait_until_ready()
+    while not bot.is_closed():
+        await channelnames_to_gametitles()
+        await asyncio.sleep(60 * 5)
+
 # Functions
 async def channelnames_to_gametitles():
     # For all the guilds the bot is member of
@@ -152,4 +159,6 @@ def log_cmd_details(ctx):
           f'"{ctx.message.content}" (by "{ctx.author}" in "{ctx.guild.name}".{ctx.channel.name})')
 
 # Start bot
+bot.loop.create_task(repeat_cmd_test())
+
 bot.run(TOKEN)
