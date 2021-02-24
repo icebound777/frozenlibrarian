@@ -109,7 +109,7 @@ async def channelnames_to_gametitles():
                     # Channel is empty and name is not default
                     elif (len(voice_channel.members) == 0
                         and voice_channel.name != channel_name_default):
-                        log_print(f'Changed channel "{voice_channel.name}"" to '
+                        log_print(f'Changed channel "{voice_channel.name}" to '
                                   f'{channel_name_default}')
                         await voice_channel.edit(name=channel_name_default)
                     # Channel is not empty, don't care about channel name
@@ -138,14 +138,14 @@ async def channelnames_to_gametitles():
                                 if (most_played_key != voice_channel.name
                                     and (sorted_membergames.get(voice_channel.name, 0)
                                          < sorted_membergames.get(most_played_key))):
-                                    log_print(f'Changed channel "{voice_channel.name}"" to '
+                                    log_print(f'Changed channel "{voice_channel.name}" to '
                                               f'{most_played_key}')
                                     await voice_channel.edit(name=most_played_key)
                                 break
                             elif (len(sorted_membergames) == 1
                                 and voice_channel.name != channel_name_default):
                                 # Members in channel, but nobody is playing: Reset channel name
-                                log_print(f'Changed channel "{voice_channel.name}"" to '
+                                log_print(f'Changed channel "{voice_channel.name}" to '
                                           f'{channel_name_default}')
                                 await voice_channel.edit(name=channel_name_default)
                                 break
