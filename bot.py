@@ -135,7 +135,9 @@ async def channelnames_to_gametitles():
                         #print(sorted_membergames)
                         for most_played_key in sorted_membergames:
                             if most_played_key != 'None':
-                                if most_played_key != voice_channel.name:
+                                if (most_played_key != voice_channel.name
+                                    and (sorted_membergames.get(voice_channel.name, 0)
+                                         < sorted_membergames.get(most_played_key))):
                                     log_print(f'Changed channel "{voice_channel.name}"" to '
                                               f'{most_played_key}')
                                     await voice_channel.edit(name=most_played_key)
@@ -147,9 +149,6 @@ async def channelnames_to_gametitles():
                                           f'{channel_name_default}')
                                 await voice_channel.edit(name=channel_name_default)
                                 break
-
-
-
 
 # Helper-Functions
 def log_cmd_details(ctx):
