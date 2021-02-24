@@ -31,9 +31,9 @@ except:
 @bot.event
 async def on_ready():
     """Initial actions after starting up"""
-    print(f'{bot.user} has connected to Discord!')
+    log_print(f'{bot.user} has connected to Discord!')
 
-    print('\nConnected to following servers:')
+    log_print('\nConnected to following servers:')
     for guild in bot.guilds:
         print(f'\"{guild.name}\" (id: {guild.id})')
 
@@ -104,25 +104,25 @@ async def channelnames_to_gametitles():
                     voice_channel = bot_guild.get_channel(channel_id)
                     # If channel does not exist
                     if voice_channel is None:
-                        print(f'Channel "{bot_guild.name}".{channel_id} '
-                              f'(Default: "{channel_name_default}") does not exist')
+                        log_print(f'Channel "{bot_guild.name}".{channel_id} '
+                                  f'(Default: "{channel_name_default}") does not exist')
                     # Channel is empty and name is not default
                     elif (len(voice_channel.members) == 0
                         and voice_channel.name != channel_name_default):
-                        print(f'Changed channel "{voice_channel.name}"" to '
-                              f'{channel_name_default}')
+                        log_print(f'Changed channel "{voice_channel.name}"" to '
+                                  f'{channel_name_default}')
                         await voice_channel.edit(name=channel_name_default)
                     # Channel is not empty, don't care about channel name
                     elif len(voice_channel.members) > 0:
                         dict_membergames = {}
-                        print(f'{voice_channel.name}')
+                        #print(f'{voice_channel.name}')
                         for channel_member in voice_channel.members:
                             if (channel_member.activity is not None
                                 and channel_member.activity.type == discord.ActivityType.playing):
                                 member_game = channel_member.activity.name
                                 dict_membergames[member_game] = dict_membergames.get(member_game, 0) + 1
-                                print(f'  {channel_member.display_name}: '
-                                      f'{member_game}')
+                                #print(f'  {channel_member.display_name}: '
+                                #      f'{member_game}')
                             else:
                                 dict_membergames['None'] = dict_membergames.get('None', 0) + 1
                         # Sort played games by amount of players per game, decreasing
@@ -136,15 +136,15 @@ async def channelnames_to_gametitles():
                         for most_played_key in sorted_membergames:
                             if most_played_key != 'None':
                                 if most_played_key != voice_channel.name:
-                                    print(f'Changed channel "{voice_channel.name}"" to '
-                                          f'{most_played_key}')
+                                    log_print(f'Changed channel "{voice_channel.name}"" to '
+                                              f'{most_played_key}')
                                     await voice_channel.edit(name=most_played_key)
                                 break
                             elif (len(sorted_membergames) == 1
                                 and voice_channel.name != channel_name_default):
                                 # Members in channel, but nobody is playing: Reset channel name
-                                print(f'Changed channel "{voice_channel.name}"" to '
-                                      f'{channel_name_default}')
+                                log_print(f'Changed channel "{voice_channel.name}"" to '
+                                          f'{channel_name_default}')
                                 await voice_channel.edit(name=channel_name_default)
                                 break
 
@@ -153,10 +153,14 @@ async def channelnames_to_gametitles():
 
 # Helper-Functions
 def log_cmd_details(ctx):
+    cmd_details = 'Cmd: "' + ctx.message.content + '" (by ' + ctx.author + ' in ' \
+                  + ctx.guild.name + '.' + ctx.channel.name + ')'
+    log_print(cmd_details)
+
+def log_print(printtext):
     now = datetime.datetime.now()
     logdate = now.strftime('%Y-%m-%d %H:%M:%S')
-    print(f'[{logdate}] Cmd: '
-          f'"{ctx.message.content}" (by "{ctx.author}" in "{ctx.guild.name}".{ctx.channel.name})')
+    print(f'[{logdate}] {printtext}')
 
 # Start bot
 bot.loop.create_task(repeat_cmd_test())
